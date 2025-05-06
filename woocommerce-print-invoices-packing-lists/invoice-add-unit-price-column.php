@@ -17,7 +17,20 @@ function sv_wc_pip_invoice_add_unit_price_column( $headers, $order_id, $document
 		foreach ( $headers as $key => $header ) {
 
 			if ( 'quantity' === $key ) {
-				$new_headers['unit_price'] = __( 'Unit price', 'textdomain' );
+				$unit_price = '';
+
+				if ( is_object( $product ) && method_exists( $product, 'get_price' ) ) {
+					$price = $product->get_price();
+					if ( is_numeric( $price ) ) {
+						$unit_price = wc_price( $price );
+					} else {
+						$unit_price = wc_price( 0 );
+					}
+				} else {
+					$unit_price = wc_price( 0 );
+				}
+
+				$new_cells['unit_price'] = $unit_price;
 			}
 
 			$new_headers[ $key ] = $header;
